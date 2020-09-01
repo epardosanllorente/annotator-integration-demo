@@ -1,6 +1,8 @@
 # Twilio AI Annotator Demo
 
-This repository is a companion project with the Twilio AI Annotator Integration Project.  
+This repository is a companion project to the Twilio AI Annotator Integration Guide.  
+
+![Annotator Demo Screenshot](/public/img/screenshot.png)
 
 It scaffolds two basic types of integration:
 1. **Embedded Annotator**: This demonstrates how you might embed the annotator into your webapp via iframe.
@@ -11,7 +13,6 @@ It scaffolds two basic types of integration:
 ### Step 1: Populate the environment with your account credentials
 This project uses the `dotenv` library to load environment variables. It expects a `.env` to be populated with relevant credentials at the root of the repository directory. A sample to be filled out has been provided at `.env.sample`.
 
-**Steps**  
 1. Login to your Twilio Account and access your account credentials.
 2. Get your EIP Service Sid from the Twilio Console or your relevant contact at Twilio.
 3. Copy the `.env.sample` to `.env`
