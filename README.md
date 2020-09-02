@@ -1,8 +1,8 @@
-# Twilio AI Annotator Demo
+# Twilio AI Annotator Integration Demo
 
 This repository is a companion project to the Twilio AI Annotator Integration Guide.  
 
-![Annotator Demo Screenshot](/public/img/screenshot.png)
+![Annotator Integration Demo Screenshot](/public/img/screenshot.png)
 
 It scaffolds two basic types of integration:
 1. **Embedded Annotator**: This demonstrates how you might embed the annotator into your webapp via iframe.
@@ -21,10 +21,10 @@ This project uses the `dotenv` library to load environment variables. It expects
 ### Step 2: Install and Start
 ```bash
 # Clone the repository
-git clone https://github.com/jtgi/demo-annotator
+git clone https://github.com/jtgi/annotator-integration-demo
 
 # Go inside the directory
-cd demo-annotator
+cd annotator-integration-demo
 
 # Install dependencies
 yarn install (or npm install)
