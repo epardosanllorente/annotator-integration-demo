@@ -44,3 +44,30 @@ To view the standalone implementation:
 ```
 http://localhost:8080/annotator/standalone
 ```
+
+## Documentation
+
+This demo illustrates the 3 key actions required to initialize the Annotator:  
+1. Acquire a Transcript Sid
+2. Acquire a one time token
+3. Use the one time token to initialize the Annotator
+
+### Annotator Standalone
+
+The high level sequence of operations for redirecting a to the standalone editor:  
+1. Authenticate the agent per you authentication system.
+2. Convert the call sid passed to a transcript sid
+3. Ensure the transcription has been `completed`
+4. Mark the Transcript as being annotated.
+5. Generate a one time token
+6. Redirect the client to the Annotator url with token appended
+
+### Annotator Embedded
+
+The high level sequence of operations for embedding the Annotator are as follows:  
+1. Authenticate the agent per your authentication system.
+2. Convert the call sid passed to a transcript sid
+3. Ensure the transcription has been `completed`
+4. Mark the Transcript as being annotated.
+5. Generate a one time token
+6. Render the web application with an Annotator embedded iframe

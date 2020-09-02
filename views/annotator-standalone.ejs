@@ -14,11 +14,14 @@
     <link rel="stylesheet" href="/css/annotate.css">
 </head>
 <body>
+    <% if (locals.errorMessage) { %>
+    <div class="error-message"><%= errorMessage %></div>
+    <% } %>
     <div class="container grid-x">
         <div class="side-menu cell medium-1 large-1">
             <ul class="vertical menu">
                 <img class="logo" src="/img/logo.png">
-                <li><a href="#">Tasks <span class="badge alert"><%= transcripts.length %></span></a></li>
+                <li><a href="#">Tasks <span class="badge alert"><%= locals.recordings.length %></span></a></li>
                 <li><a href="#">Chat</a></li>
                 <li><a href="#">Timesheet</a></li>
                 <li><a href="#">Notes</a></li>
@@ -28,14 +31,14 @@
         <div class="cell medium-11 large-11">
             <div class="task-header"><strong>Tasks</strong></div>
             <ul class="task-list no-bullet">
-                <% transcripts.forEach((t, idx) => { %>
-                <li class="<%= t.active ? 'task-item-selected' : '' %>">
+                <% locals.recordings.forEach((r, idx) => { %>
+                <li class="<%= r.active ? 'task-item-selected' : '' %>">
                         <a class="task-name"
                         target="_blank"
-                        href="/annotator/standalone?view=<%= t.sid %>"
+                        href="/annotator/standalone?view=<%= r.call_sid %>"
                         >
                             Annotation Task <%= idx + 1 %><br/>
-                            <small><%= t.sid %></small>
+                            <small><%= r.date_created %></small>
                         </a>
                 </li>
                 <% }); %>

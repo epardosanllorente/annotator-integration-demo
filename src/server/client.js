@@ -33,9 +33,28 @@ module.exports = {
         }
     },
 
-    getTranscripts: async () => {
+    getRecordings: async () => {
         const rsp = await fetch(
-            `https://preview.twilio.com/transcriptions/Services/${eipServiceSid}/Transcripts`,
+            `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Recordings.json`,
+            {
+                method: 'GET',
+                headers: {
+                    Authorization: `Basic ${twilioEncodedCreds}`,
+                },
+            }
+        )
+
+        if (rsp.ok) {
+            const { recordings } = await rsp.json();
+            return recordings;
+        } else {
+            throw new Error('failed to fetch recordings');
+        } 
+    },
+
+    getTranscriptForCallSid: async callSid => {
+        const rsp = await fetch(
+            `https://preview.twilio.com/transcriptions/Services/${eipServiceSid}/Transcripts?CallSid=${callSid}`,
             {
                 method: 'GET',
                 headers: {
@@ -46,7 +65,7 @@ module.exports = {
 
         if (rsp.ok) {
             const { transcripts } = await rsp.json();
-            return transcripts;
+            return transcripts.find(t => t.call_sid === callSid);
         } else {
             throw new Error('failed to fetch transcripts');
         } 

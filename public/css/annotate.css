@@ -68,3 +68,10 @@ html, body {
 .select-transcript-placeholder {
     padding: 1em;
 }
+
+.error-message {
+    padding: 0.75em;
+    background-color: lightcoral;
+    font-weight: bold;
+    color: black;
+}

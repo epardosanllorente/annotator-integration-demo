@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const auth = require('./auth');
 const client = require('./client');
+const db = require('./db');
 
 const app = express();
 
@@ -12,24 +13,34 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 /**
- * Renders a list of transcripts to be annotated. When a
- * transcript sid is passed via a `view` query param it 
+ * Renders a list of recordings to be annotated. When a
+ * call sid is passed via a `view` query param it 
  * will rerender the page with the annotator embedded
  * via iframe with the transcript passed.
  */
 app.get('/annotator/embedded', async (req, res) => {
     const { userId } = await auth.authenticate(req);
-    const transcripts = await client.getTranscripts();
+    const allRecordings = await client.getRecordings();
+    const recordings = allRecordings.filter(r => !db.isInProgress(r.call_sid));
 
-    let templateVars = { transcripts };
+    let templateVars = { recordings };
 
     if (req.query.view) {
-        const transcriptSid = req.query.view;
-        const token = await client.getToken(transcriptSid, userId);
-        const iframeUrl = `${annotatorAssetUrl}?token=${token}`;
+        const callSid = req.query.view;
+        const transcript = await client.getTranscriptForCallSid(callSid);
 
-        templateVars.iframeUrl = iframeUrl;
-        templateVars.activeTranscript = transcriptSid;
+        if (transcript.status === 'completed') {
+            db.markInProgress(transcript.call_sid);
+
+            const token = await client.getToken(transcript.sid, userId);
+            const iframeUrl = `${annotatorAssetUrl}?token=${token}`;
+
+            templateVars.iframeUrl = iframeUrl;
+            templateVars.activeTranscript = transcript.sid;
+        } else {
+            templateVars.errorMessage = 'That transcription isn\'t ready yet. Try again later';
+            return res.render('annotator-embedded', templateVars);
+        }
     }
 
     // See `/views/annotator-embedded.ejs` for template
@@ -37,22 +48,32 @@ app.get('/annotator/embedded', async (req, res) => {
 });
 
 /**
- * Renders a list of transcripts to be annotated. When a
- * transcript sid is passed via a `view` query param it 
+ * Renders a list of recordings to be annotated. When a
+ * recording's call sid is passed via a `view` query param it 
  * will redirect to the standalone version of the annotator
- * with the transcript passed.
+ * with the transcript for annoation.
  */
 app.get('/annotator/standalone', async (req, res) => {
     const { userId } = await auth.authenticate(req);
-    const transcripts = await client.getTranscripts();
+    const allRecordings = await client.getRecordings();
+    const recordings = allRecordings.filter(r => !db.isInProgress(r.call_sid));
 
-    let templateVars = { transcripts };
+    let templateVars = { recordings };
 
     if (req.query.view) {
-        const transcriptSid = req.query.view;
-        const token = await client.getToken(transcriptSid, userId);
-        const url = `${annotatorAssetUrl}?token=${token}`;
-        return res.redirect(url);
+        const callSid = req.query.view;
+        const transcript = await client.getTranscriptForCallSid(callSid);
+
+        if (transcript.status === 'completed') {
+            db.markInProgress(callSid);
+
+            const token = await client.getToken(transcript.sid, userId);
+            const url = `${annotatorAssetUrl}?token=${token}`;
+            return res.redirect(url);
+        } else {
+            templateVars.errorMessage = 'That transcription isn\'t ready yet. Try again later';
+            return res.render('annotator-standalone', templateVars);
+        }
     }
 
     // See `/views/annotator-standalone.ejs` for template
