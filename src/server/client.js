@@ -8,20 +8,25 @@ const twilioEncodedCreds = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`)
 module.exports = {
     getToken: async (transcriptSid, userId) => {
         const rsp = await fetch(
-            'https://preview.twilio.com/transcriptions/Tokens/Generate',
+            'https://ai.twilio.com/v1/Tokens',
             {
                 method: 'POST',
                 headers: {
                     Authorization: `Basic ${twilioEncodedCreds}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    service_sid: eipServiceSid,
-                    transcript_sid: transcriptSid,
-                    metadata: {
-                        userId
+                body: JSON.stringify(
+                    {
+                        grants: [{
+                            product: 'annotator',
+                            service_sid: eipServiceSid,
+                            transcript_sid: transcriptSid,
+                            metadata: {
+                                userId
+                            }
+                        }]
                     }
-                })
+                )
             }
         );
 
@@ -54,7 +59,7 @@ module.exports = {
 
     getTranscriptForCallSid: async callSid => {
         const rsp = await fetch(
-            `https://preview.twilio.com/transcriptions/Services/${eipServiceSid}/Transcripts?CallSid=${callSid}`,
+            `https://ai.twilio.com/v1/Services/${eipServiceSid}/Transcripts?CallSid=${callSid}`,
             {
                 method: 'GET',
                 headers: {
